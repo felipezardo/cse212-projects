@@ -11,24 +11,42 @@ public class CustomerService {
         // Test Cases
 
         // Test 1
-        // Scenario: 
-        // Expected Result: 
+        // Scenario: Try to add more customers than the max size. (Max size is 2).
+        // Expected Result: It should let me add 2 customers, but the 3rd time it should show an error message.
         Console.WriteLine("Test 1");
-
-        // Defect(s) Found: 
+        var cs1 = new CustomerService(2);
+        Console.WriteLine("Type anything for the next 2 customers:");
+        cs1.AddNewCustomer(); // Customer 1
+        cs1.AddNewCustomer(); // Customer 2
+        Console.WriteLine("Now trying to add a 3rd customer. You should see an error:");
+        cs1.AddNewCustomer(); // Customer 3 - should fail
+        // Defect(s) Found: It was using > instead of >=. I change this so it stops when queue is full.
 
         Console.WriteLine("=================");
 
         // Test 2
-        // Scenario: 
-        // Expected Result: 
+        // Scenario: Serve a customer from a normal queue.
+        // Expected Result: It should display the correct customer information that I just typed.
         Console.WriteLine("Test 2");
-
-        // Defect(s) Found: 
+        var cs2 = new CustomerService(5);
+        Console.WriteLine("Type a customer name, id and problem:");
+        cs2.AddNewCustomer();
+        Console.WriteLine("Now serving the customer:");
+        cs2.ServeCustomer();
+        // Defect(s) Found: ServeCustomer was removing the customer first, then reading index 0. This is wrong. I fix the order to read first, then remove.
 
         Console.WriteLine("=================");
 
-        // Add more Test Cases As Needed Below
+        // Test 3
+        // Scenario: Serve a customer when the queue is empty.
+        // Expected Result: It should show an error message and not crash.
+        Console.WriteLine("Test 3");
+        var cs3 = new CustomerService(5);
+        Console.WriteLine("Trying to serve from empty queue:");
+        cs3.ServeCustomer();
+        // Defect(s) Found: The code did not check if queue is empty. It just crashed. I add a check to show error message if count is 0.
+        
+        Console.WriteLine("=================");
     }
 
     private readonly List<Customer> _queue = new();
@@ -67,7 +85,7 @@ public class CustomerService {
     /// </summary>
     private void AddNewCustomer() {
         // Verify there is room in the service queue
-        if (_queue.Count > _maxSize) {
+        if (_queue.Count >= _maxSize) { // I change > to >= because if it is equal, it is full already.
             Console.WriteLine("Maximum Number of Customers in Queue.");
             return;
         }
@@ -88,8 +106,14 @@ public class CustomerService {
     /// Dequeue the next customer and display the information.
     /// </summary>
     private void ServeCustomer() {
-        _queue.RemoveAt(0);
-        var customer = _queue[0];
+        // I add this check to prevent crash if queue is empty
+        if (_queue.Count <= 0) {
+            Console.WriteLine("Queue is empty. No customers to serve.");
+            return;
+        }
+
+        var customer = _queue[0]; // I move this line up to get the customer before remove
+        _queue.RemoveAt(0);       // Now I remove
         Console.WriteLine(customer);
     }
 
