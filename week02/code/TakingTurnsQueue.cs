@@ -40,9 +40,16 @@ public class TakingTurnsQueue
         else
         {
             Person person = _people.Dequeue();
+            
+            // FIX: If turns > 1, decrease turns and put back in queue.
+            // If turns <= 0 (infinite), put back without decreasing.
             if (person.Turns > 1)
             {
                 person.Turns -= 1;
+                _people.Enqueue(person);
+            }
+            else if (person.Turns <= 0)
+            {
                 _people.Enqueue(person);
             }
 

@@ -13,7 +13,9 @@ public class PersonQueue
     /// <param name="person">The person to add</param>
     public void Enqueue(Person person)
     {
-        _queue.Insert(0, person);
+        // BUG FIX: People should go to the back of the queue, not the front.
+        // Replaced Insert(0, person) with Add(person).
+        _queue.Add(person);
     }
 
     public Person Dequeue()
